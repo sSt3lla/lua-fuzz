@@ -80,7 +80,7 @@ AR=llvm-ar-17 rc
 RANLIB=llvm-ranlib-17
 AS=llvm-as-17
 RM= rm -f
-
+OUT_FILE?= fuzz
 
 
 # == END OF USER SETTINGS. NO NEED TO CHANGE ANYTHING BELOW THIS LINE =========
@@ -105,7 +105,7 @@ ALL_O= $(CORE_O) $(LUA_O) $(AUX_O) $(LIB_O)
 ALL_A= $(CORE_T)
 
 fuzz: fuzz.c $(CORE_T)
-	$(CC) -o fuzz $(CFLAGS) fuzz.c $(CORE_T) $(LIBS) $(MYLIBS) $(DL)
+	$(CC) -o $(OUT_FILE) $(CFLAGS) fuzz.c $(CORE_T) $(LIBS) $(MYLIBS) $(DL)
 
 all:	$(ALL_T)
 	touch all
