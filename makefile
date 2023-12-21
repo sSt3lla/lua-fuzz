@@ -40,7 +40,7 @@ CWARNSC= -Wdeclaration-after-statement \
 	-Wold-style-definition \
 
 
-CWARNS= $(CWARNSCPP) $(CWARNSC) $(CWARNGCC)
+CWARNS= $(CWARNSCPP) $(CWARNSC) #$(CWARNGCC)
 
 # Some useful compiler options for internal tests:
 # -DLUAI_ASSERT turns on all assertions inside Lua.
@@ -70,15 +70,15 @@ LOCAL = $(TESTS) $(CWARNS)
 
 
 # enable Linux goodies
-MYCFLAGS= $(LOCAL) -std=c99 -DLUA_USE_LINUX -DLUA_USE_READLINE
+MYCFLAGS= $(LOCAL) -std=c99 -DLUA_USE_LINUX -DLUA_USE_READLINE -ggdb3 -Wno-unknown-argument -Wno-declaration-after-statement
 MYLDFLAGS= $(LOCAL) -Wl,-E
 MYLIBS= -ldl -lreadline
 
-
-CC= gcc
-CFLAGS= -Wall -O2 $(MYCFLAGS) -fno-stack-protector -fno-common -march=native
-AR= ar rc
-RANLIB= ranlib
+CC = afl-lto
+CFLAGS= -Wall $(MYCFLAGS) -fno-stack-protector -fno-common -march=native
+AR=llvm-ar-17 rc
+RANLIB=llvm-ranlib-17
+AS=llvm-as-17
 RM= rm -f
 
 
@@ -103,6 +103,9 @@ LUA_O=	lua.o
 ALL_T= $(CORE_T) $(LUA_T)
 ALL_O= $(CORE_O) $(LUA_O) $(AUX_O) $(LIB_O)
 ALL_A= $(CORE_T)
+
+fuzz: fuzz.c $(CORE_T)
+	$(CC) -o fuzz $(CFLAGS) fuzz.c $(CORE_T) $(LIBS) $(MYLIBS) $(DL)
 
 all:	$(ALL_T)
 	touch all
